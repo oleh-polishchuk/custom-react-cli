@@ -1,0 +1,83 @@
+#!/bin/bash
+
+# Bootstrap generate component
+#
+# Overview
+#   bootstrap generate component [name]
+#
+# Alias
+#   bootstrap generate c [name]
+
+ACTION=$1
+INSTANCE=$2
+INSTANCE_NAME=$3
+BRAND=$4
+it="${0##*/}"
+
+CONFIG=$(cat ~/.bootstrap)
+PROJECT_DIR=$(echo $CONFIG | jq -r '.PROJECT_DIR')
+
+case $ACTION in
+"generate")
+    ;;
+*)
+    echo $"Usage: $it [action] [instance] [name] [brand]"
+    echo $"Example: $it generate [instance] [name] [brand]"
+    exit 1;
+    ;;
+esac
+
+case $INSTANCE in
+"component")
+    ;;
+*)
+    echo $"Usage: $it [action] [instance] [name] [brand]"
+    echo $"Example: $it $ACTION component [name] [brand]"
+    exit 1;
+    ;;
+esac
+
+if [ -z "$INSTANCE_NAME" ]
+then
+    INSTANCE_NAME=$(echo $CONFIG | jq -r '.DEFAULT_INSTANCE_NAME')
+fi
+
+if [ -z "$BRAND" ]
+then
+    BRAND=$(echo $CONFIG | jq -r '.DEFAULT_BRAND')
+fi
+
+if [[ "$ACTION" == "generate" && "$INSTANCE" == "component" ]]
+then
+    COMPONENTS_DIR="$PROJECT_DIR/$BRAND/Components"
+
+    cd "$COMPONENTS_DIR/"
+    mkdir $INSTANCE_NAME
+    cd $INSTANCE_NAME
+    touch index.js
+    cat >./index.js <<EOL
+import "./style.scss";
+import React from "react";
+import PropTypes from "prop-types";
+
+const ${INSTANCE_NAME} = () => (
+    <div styleName="${INSTANCE_NAME}">
+        ${INSTANCE_NAME} works!
+    </div>
+);
+
+export default ${INSTANCE_NAME};
+
+EOL
+    touch style.scss
+    CLASS_NAME=$(echo $INSTANCE_NAME | perl -ne 'print lc(join("-", split(/(?=[A-Z])/)))')
+    cat >./style.scss <<EOL
+.${CLASS_NAME} {
+    display: flex;
+}
+EOL
+    git add .
+    echo "Created $COMPONENTS_DIR/$INSTANCE_NAME/index.js"
+    echo "Created $COMPONENTS_DIR/$INSTANCE_NAME/style.scss"
+    echo "==> Done!"
+fi
