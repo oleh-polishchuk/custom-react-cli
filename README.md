@@ -18,6 +18,6 @@ I will add more information in future... 😊
 
 ## Command Overview
 
-| COMMAND  	| ALIAS 	| DESCRIPTION                                           	|   	|   	|
-|----------	|-------	|-------------------------------------------------------	|---	|---	|
-| generate 	|       	| Generates and/or modifies files based on a schematic. 	|   	|   	|
+| COMMAND  	| ALIAS 	| DESCRIPTION                                           	|
+|----------	|-------	|-------------------------------------------------------	|
+| generate 	|       	| Generates and/or modifies files based on a schematic. 	|
